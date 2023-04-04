@@ -76,4 +76,6 @@ public class FlightRestController {
 				return flightService.searchFlights(to, from, departureDate, classType);
 	}
 
+
+
 }

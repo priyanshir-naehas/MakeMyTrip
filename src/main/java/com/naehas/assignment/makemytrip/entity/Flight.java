@@ -1,6 +1,8 @@
 package com.naehas.assignment.makemytrip.entity;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -16,6 +18,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -68,6 +72,11 @@ public class Flight {
 
 	@Column(name = "arr_time", nullable = true)
 	private LocalTime arrivalTime;
+
+
+
+	@Column(name = "duration")
+	private long duration;
 
 
 	public int getFlightId() {
@@ -126,7 +135,21 @@ public class Flight {
 	public void setArrivalDate(LocalDate arrivalDate) {
 		this.arrivalDate = arrivalDate;
 	}
+	public long getDuration() {
+		LocalDateTime dept_date = LocalDateTime.of(departureDate, departureTime);
+		LocalDateTime arr_date = LocalDateTime.of(arrivalDate, arrivalTime);
 
+		long duration = Duration.between(dept_date, arr_date).toMinutes();
+		return duration;
+	}
+
+	public LocalDate getDepartureDate() {
+		return departureDate;
+	}
+
+	public LocalDate getArrivalDate() {
+		return arrivalDate;
+	}
 
 	public List<FareDetails> getFareDetails() {
 		return fareDetails;
@@ -134,6 +157,12 @@ public class Flight {
 
 	public void setFareDetails(List<FareDetails> fareDetails) {
 		this.fareDetails = fareDetails;
+	}
+
+	@PrePersist
+	@PreUpdate
+	public void setDuration() {
+		this.duration = getDuration();
 	}
 
 	public Flight(List<FareDetails> fareDetails, String airLine, String from, String to, LocalDate departureDate,
@@ -147,7 +176,10 @@ public class Flight {
 		this.arrivalDate = arrivalDate;
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
+
+
 	}
+
 
 	public Flight() {
 		super();
@@ -159,8 +191,6 @@ public class Flight {
 				+ from + ", to=" + to + ", departureDate=" + departureDate + ", arrivalDate=" + arrivalDate
 				+ ", departureTime=" + departureTime + ", arrivalTime=" + arrivalTime + "]";
 	}
-
-
 
 
 
