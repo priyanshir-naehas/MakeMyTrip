@@ -52,7 +52,7 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	public List<Object> searchFlights(String to, String from, LocalDate departureDate, String classType) {
 
-		return flightRepository.findByToAndFromAndDepartureDateAndClassTypeOrderByDurationAsc(to, from, departureDate,
+		return flightRepository.findByToAndFromAndDepartureDateAndFareDetailsClassType(to, from, departureDate,
 				classType);
 	}
 

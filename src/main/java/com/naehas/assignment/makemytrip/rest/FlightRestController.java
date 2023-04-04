@@ -1,6 +1,7 @@
 package com.naehas.assignment.makemytrip.rest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +30,7 @@ public class FlightRestController {
 	}
 
 	@GetMapping("/flights")
-	public List<Flight> getAllFlights()
-	{
+	public List<Flight> getAllFlights() {
 		return flightService.findAll();
 	}
 
@@ -39,7 +39,7 @@ public class FlightRestController {
 
 		Flight flight_detail = flightService.save(flight);
 		return flight_detail;
-		
+
 	}
 
 	@PutMapping("/flights")
@@ -67,15 +67,23 @@ public class FlightRestController {
 
 	}
 
-
-
 	@GetMapping("/search")
 	public List<Object> searchFlights(@RequestParam("to") String to, @RequestParam("from") String from,
-			@RequestParam("departureDate") LocalDate departureDate,@RequestParam("classType")String classType
-			) {
-				return flightService.searchFlights(to, from, departureDate, classType);
+			@RequestParam("departureDate") LocalDate departureDate, @RequestParam("classType") String classType,
+			@RequestParam("roundTrip") boolean roundTrip,
+			@RequestParam(value = "returnDate", required = false) LocalDate returnDate) {
+
+		List<Object> oneWayTripFlights = new ArrayList<>();
+		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType);
+
+
+		if (roundTrip == true) {
+
+			List<Object> roundTripFlights = flightService.searchFlights(from, to, returnDate, classType);
+			oneWayTripFlights.addAll(roundTripFlights);
+
+		}
+		return oneWayTripFlights;
 	}
-
-
 
 }
