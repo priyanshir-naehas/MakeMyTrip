@@ -19,8 +19,6 @@ import jakarta.persistence.Table;
 
 public class FareDetails {
 
-
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -36,7 +34,9 @@ public class FareDetails {
 	@JoinColumn(name = "flight_number", nullable = false)
 	@JsonBackReference
 	private Flight flightNumber;
-
+	
+	
+    //Getters and Setters
 	public long getFare() {
 		return fare;
 	}
@@ -45,18 +45,9 @@ public class FareDetails {
 		this.fare = fare;
 	}
 
-
 	public FareDetails(long fare) {
 		super();
 		this.fare = fare;
-	}
-
-	public FareDetails(long fare, String classType, Flight flightNumber) {
-		super();
-		this.fare = fare;
-		this.classType = classType;
-		this.flightNumber = flightNumber;
-
 	}
 
 
@@ -86,6 +77,14 @@ public class FareDetails {
 
 	public FareDetails() {
 		super();
+	}
+
+	public FareDetails(long fare, String classType, Flight flightNumber) {
+		super();
+		this.fare = fare;
+		this.classType = classType;
+		this.flightNumber = flightNumber;
+
 	}
 
 	@Override

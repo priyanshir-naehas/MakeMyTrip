@@ -47,6 +47,4 @@ public class FareServiceImp implements FareService {
 		fareDetailsRepository.deleteAll();
 	}
 
-
-
 }

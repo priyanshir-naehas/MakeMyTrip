@@ -48,22 +48,21 @@ public class FlightServiceImpl implements FlightService {
 		flightRepository.deleteAll();
 	}
 
-
-
 	@Override
 	public List<Flight> searchFlights(String to, String from, LocalDate departureDate, String classType,
-			boolean sortDuration, boolean sortFares) {
+			String sortType) {
 
 		Sort sortByDuration = null;
 		Sort sortByFares = null;
 
-		if (sortDuration) {
+		if (sortType.equals("Duration")) {
 			sortByDuration = Sort.by("duration");
 		}
 
-		else if (sortFares) {
+		else if (sortType.equals("Fare")) {
 			sortByFares = Sort.by("fareDetails.fare");
 		}
+
 		// variable to store the field for which we have to filter data
 		Sort sendFilter = null;
 
@@ -71,12 +70,10 @@ public class FlightServiceImpl implements FlightService {
 		if (sortByDuration != null) {
 			sendFilter = sortByDuration;
 		} else if (sortByFares != null) {
-			sendFilter=sortByFares;
+			sendFilter = sortByFares;
 		}
 
-		List<Flight> flights = flightRepository.findByToAndFromAndDepartureDate(to,
-				from,
-				departureDate, sendFilter);
+		List<Flight> flights = flightRepository.findByToAndFromAndDepartureDate(to, from, departureDate, sendFilter);
 
 		for (Flight flight : flights) {
 			flight.getFareDetails().removeIf(fareDetail -> !fareDetail.getClassType().equals(classType));

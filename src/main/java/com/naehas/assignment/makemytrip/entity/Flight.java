@@ -26,14 +26,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
-
 @Component
 @Entity
 @Table(name = "flight_data")
 
 public class Flight {
-
-
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,11 +45,8 @@ public class Flight {
 	@Column(name = "airline")
 	private String airLine;
 
-
 	@Column(name = "from_location")
 	private String from;
-
-
 
 	@Column(name = "to_location")
 	private String to;
@@ -73,11 +67,10 @@ public class Flight {
 	@Column(name = "arr_time", nullable = true)
 	private LocalTime arrivalTime;
 
-
-
 	@Column(name = "duration")
 	private long duration;
 
+	// Getters and Setters
 
 	public int getFlightId() {
 		return flightId;
@@ -86,7 +79,6 @@ public class Flight {
 	public void setFlightId(int flightId) {
 		this.flightId = flightId;
 	}
-
 
 	public String getAirLine() {
 		return airLine;
@@ -135,6 +127,7 @@ public class Flight {
 	public void setArrivalDate(LocalDate arrivalDate) {
 		this.arrivalDate = arrivalDate;
 	}
+
 	public long getDuration() {
 		LocalDateTime dept_date = LocalDateTime.of(departureDate, departureTime);
 		LocalDateTime arr_date = LocalDateTime.of(arrivalDate, arrivalTime);
@@ -165,6 +158,7 @@ public class Flight {
 		this.duration = getDuration();
 	}
 
+	// Constructor
 	public Flight(List<FareDetails> fareDetails, String airLine, String from, String to, LocalDate departureDate,
 			LocalDate arrivalDate, LocalTime departureTime, LocalTime arrivalTime) {
 		super();
@@ -177,9 +171,7 @@ public class Flight {
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
 
-
 	}
-
 
 	public Flight() {
 		super();
@@ -191,9 +183,5 @@ public class Flight {
 				+ from + ", to=" + to + ", departureDate=" + departureDate + ", arrivalDate=" + arrivalDate
 				+ ", departureTime=" + departureTime + ", arrivalTime=" + arrivalTime + "]";
 	}
-
-
-
-
 
 }

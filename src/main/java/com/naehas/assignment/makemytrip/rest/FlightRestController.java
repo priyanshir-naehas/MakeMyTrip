@@ -72,32 +72,17 @@ public class FlightRestController {
 			@RequestParam("departureDate") LocalDate departureDate, @RequestParam("classType") String classType,
 			@RequestParam("roundTrip") boolean roundTrip,
 			@RequestParam(value = "returnDate", required = false) LocalDate returnDate,
-			@RequestParam(value = "sortByFilter", required = false) String sortByFilter) {
+			@RequestParam(value = "sortByFilter", defaultValue = "null", required = false) String sortType) {
 
 		List<Flight> oneWayTripFlights = new ArrayList<>();
 
 		// SORTING FOR ONEWAY
-		if (sortByFilter.equals("Duration")) {
-			// if we sort by duration and sort by fares
-				oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, true, false);
-			}
-			else if (sortByFilter.equals("Fare")) {
-				oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, false, true);
-
-			}
+		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, sortType);
 
 		// SORTING FOR ROUNDTRIP
 		if (roundTrip == true) {
 			List<Flight> roundTripFlights = new ArrayList<>();
-
-			if (sortByFilter.equals("Duration")) {
-				// if we sort by duration and not by fares
-					roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, true, false);
-				}
-				else if (sortByFilter.equals("Fare")) {
-					roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, false, true);
-
-				}
+			roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, sortType);
 
 			oneWayTripFlights.addAll(roundTripFlights);
 
