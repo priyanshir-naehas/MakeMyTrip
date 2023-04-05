@@ -1,6 +1,7 @@
 package com.naehas.assignment.makemytrip.dao;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -13,6 +14,9 @@ import com.naehas.assignment.makemytrip.entity.Flight;
 public interface FlightRepository extends JpaRepository<Flight, Integer> {
 
 	List<Flight> findByToAndFromAndDepartureDate(String to, String from, LocalDate departureDate, Sort sort);
+
+	List<Flight> findByToAndFromAndDepartureDateAndDepartureTimeBetween(String to, String from, LocalDate departureDate,
+			Sort sort, LocalTime begin, LocalTime end);
 
 
 }

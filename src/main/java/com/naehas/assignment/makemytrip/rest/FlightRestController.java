@@ -72,17 +72,18 @@ public class FlightRestController {
 			@RequestParam("departureDate") LocalDate departureDate, @RequestParam("classType") String classType,
 			@RequestParam("roundTrip") boolean roundTrip,
 			@RequestParam(value = "returnDate", required = false) LocalDate returnDate,
-			@RequestParam(value = "sortByFilter", defaultValue = "null", required = false) String sortType) {
+			@RequestParam(value = "sortType", defaultValue = "null", required = false) String sortType,
+			@RequestParam(value = "filterType", required = false, defaultValue = "null") String filterType) {
 
 		List<Flight> oneWayTripFlights = new ArrayList<>();
 
 		// SORTING FOR ONEWAY
-		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, sortType);
+		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, sortType, filterType);
 
 		// SORTING FOR ROUNDTRIP
 		if (roundTrip == true) {
 			List<Flight> roundTripFlights = new ArrayList<>();
-			roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, sortType);
+			roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, sortType, filterType);
 
 			oneWayTripFlights.addAll(roundTripFlights);
 
