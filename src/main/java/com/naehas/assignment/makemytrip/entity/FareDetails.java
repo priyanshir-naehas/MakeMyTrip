@@ -2,11 +2,15 @@ package com.naehas.assignment.makemytrip.entity;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Component
@@ -28,8 +32,10 @@ public class FareDetails {
 	@Column(name = "class_type")
 	public String classType;
 
-	@Column(name = "flight_number", insertable = false, updatable = false)
-	private int flightNumber;
+	@ManyToOne
+	@JoinColumn(name = "flight_number", nullable = false)
+	@JsonBackReference
+	private Flight flightNumber;
 
 	public long getFare() {
 		return fare;
@@ -45,7 +51,7 @@ public class FareDetails {
 		this.fare = fare;
 	}
 
-	public FareDetails(long fare, String classType, int flightNumber) {
+	public FareDetails(long fare, String classType, Flight flightNumber) {
 		super();
 		this.fare = fare;
 		this.classType = classType;
@@ -70,11 +76,11 @@ public class FareDetails {
 		this.classType = classType;
 	}
 
-	public int getFlightNumber() {
+	public Flight getFlightNumber() {
 		return flightNumber;
 	}
 
-	public void setFlightNumber(int flightNumber) {
+	public void setFlightNumber(Flight flightNumber) {
 		this.flightNumber = flightNumber;
 	}
 

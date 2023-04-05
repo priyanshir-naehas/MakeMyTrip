@@ -18,12 +18,7 @@ public interface FlightService {
 
 	public void deleteAll();
 
-
-
-	List<Object> searchFlights(String to, String from, LocalDate departureDate, String classType);
-
-
-
-
+	List<Flight> searchFlights(String to, String from, LocalDate departureDate, String classType, boolean sortDuration,
+			boolean sortFares);
 
 }

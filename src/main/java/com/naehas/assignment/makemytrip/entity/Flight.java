@@ -9,14 +9,15 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -40,13 +41,12 @@ public class Flight {
 	@SequenceGenerator(name = "my_seq_gen", sequenceName = "ENTITY_SEQ")
 	private int flightId;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "flight_number", referencedColumnName = "flight_id")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "flightNumber")
+	@JsonManagedReference
 	private List<FareDetails> fareDetails;
 
 	@Column(name = "airline")
 	private String airLine;
-
 
 
 	@Column(name = "from_location")
