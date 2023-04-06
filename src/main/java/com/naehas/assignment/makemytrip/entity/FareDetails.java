@@ -79,6 +79,8 @@ public class FareDetails {
 		super();
 	}
 
+	// Constructor
+
 	public FareDetails(long fare, String classType, Flight flightNumber) {
 		super();
 		this.fare = fare;

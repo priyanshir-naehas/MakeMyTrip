@@ -56,7 +56,10 @@ public class FlightServiceImpl implements FlightService {
 
 		LocalTime startTime = null;
 		LocalTime endTime = null;
+		Sort sortByDuration = null;
+		Sort sortByFares = null;
 
+		// CHECKING FOR FILTER TYPE
 		if (filterType.equals("Morning Departure")) {
 			startTime = LocalTime.of(5, 0);
 			endTime = LocalTime.of(12, 0);
@@ -65,9 +68,7 @@ public class FlightServiceImpl implements FlightService {
 			endTime = LocalTime.of(23, 59);
 		}
 
-		Sort sortByDuration = null;
-		Sort sortByFares = null;
-
+		// CHECKING FOR SORT TYPE
 		if (sortType.equals("Duration")) {
 			sortByDuration = Sort.by("duration");
 		}
@@ -76,27 +77,26 @@ public class FlightServiceImpl implements FlightService {
 			sortByFares = Sort.by("fareDetails.fare");
 		}
 
-		// variable to store the field for which we have to filter data
-		Sort sendFilter = null;
+		// variable to store the field for which we have to sort data
+		Sort sendSort = null;
 
-		// Logic to filter
+		// Logic to sort
 		if (sortByDuration != null) {
-			sendFilter = sortByDuration;
+			sendSort = sortByDuration;
 		} else if (sortByFares != null) {
-			sendFilter = sortByFares;
+			sendSort = sortByFares;
 		}
 
 		List<Flight> flights = new ArrayList<>();
 
-
 		// FOR MORNING DEPARTURE AND LATE DEPARTURE
-
-		if (!filterType.equals("Morning Departure") && !filterType.equals("Late Departure")) {
-			flights = flightRepository.findByToAndFromAndDepartureDate(to, from, departureDate, sendFilter);
-		} else {
+		if (filterType.equals("Morning Departure") || filterType.equals("Late Departure")) {
 			flights = flightRepository.findByToAndFromAndDepartureDateAndDepartureTimeBetween(to, from, departureDate,
-					sendFilter, startTime, endTime);
+					startTime, endTime, sendSort);
+		} else {
+			flights = flightRepository.findByToAndFromAndDepartureDate(to, from, departureDate, sendSort);
 		}
+
 
 		for (Flight flight : flights) {
 			flight.getFareDetails().removeIf(fareDetail -> !fareDetail.getClassType().equals(classType));

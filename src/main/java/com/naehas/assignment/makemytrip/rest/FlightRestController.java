@@ -29,11 +29,13 @@ public class FlightRestController {
 		this.flightService = flightService;
 	}
 
+	// Get All Flights
 	@GetMapping("/flights")
 	public List<Flight> getAllFlights() {
 		return flightService.findAll();
 	}
 
+	// Add a new Flight
 	@PostMapping("flights")
 	public Flight addFlight(@RequestBody Flight flight) {
 
@@ -42,6 +44,7 @@ public class FlightRestController {
 
 	}
 
+	// Updating Flights
 	@PutMapping("/flights")
 	public Flight updateFlight(@RequestBody Flight flight) {
 
@@ -50,6 +53,7 @@ public class FlightRestController {
 
 	}
 
+	// Deleting Flight By Id
 	@DeleteMapping("/flights/{flightId}")
 	public String deleteFlight(@PathVariable int flightId) {
 
@@ -59,6 +63,7 @@ public class FlightRestController {
 
 	}
 
+	// Deleting all Flights
 	@DeleteMapping("/flights")
 	public String deleteAllFlights(Flight flight) {
 
@@ -67,6 +72,7 @@ public class FlightRestController {
 
 	}
 
+	// Searching,Sorting,Filtering Flights
 	@GetMapping("/search")
 	public List<Flight> searchFlights(@RequestParam("to") String to, @RequestParam("from") String from,
 			@RequestParam("departureDate") LocalDate departureDate, @RequestParam("classType") String classType,

@@ -13,10 +13,11 @@ import com.naehas.assignment.makemytrip.entity.Flight;
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Integer> {
 
+
 	List<Flight> findByToAndFromAndDepartureDate(String to, String from, LocalDate departureDate, Sort sort);
 
 	List<Flight> findByToAndFromAndDepartureDateAndDepartureTimeBetween(String to, String from, LocalDate departureDate,
-			Sort sort, LocalTime begin, LocalTime end);
+			LocalTime begin, LocalTime end, Sort sort);
 
 
 }
