@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.naehas.assignment.makemytrip.dto.FlightDTO;
 import com.naehas.assignment.makemytrip.entity.Flight;
 
 public interface FlightService {
@@ -18,7 +19,7 @@ public interface FlightService {
 
 	public void deleteAll();
 
-	List<Flight> searchFlights(String to, String from, LocalDate departureDate, String classType, String sortType,
+	List<FlightDTO> searchFlights(String to, String from, LocalDate departureDate, String classType, String sortType,
 			String filterType);
 
 }

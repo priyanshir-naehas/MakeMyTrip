@@ -5,12 +5,15 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.naehas.assignment.makemytrip.dao.FlightRepository;
+import com.naehas.assignment.makemytrip.dto.FlightDTO;
+import com.naehas.assignment.makemytrip.entity.FareDetails;
 import com.naehas.assignment.makemytrip.entity.Flight;
 
 @Service
@@ -51,7 +54,7 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
-	public List<Flight> searchFlights(String to, String from, LocalDate departureDate, String classType,
+	public List<FlightDTO> searchFlights(String to, String from, LocalDate departureDate, String classType,
 			String sortType, String filterType) {
 
 		LocalTime startTime = null;
@@ -97,11 +100,26 @@ public class FlightServiceImpl implements FlightService {
 			flights = flightRepository.findByToAndFromAndDepartureDate(to, from, departureDate, sendSort);
 		}
 
-
 		for (Flight flight : flights) {
 			flight.getFareDetails().removeIf(fareDetail -> !fareDetail.getClassType().equals(classType));
 		}
 
-		return flights;
+//		List<FlightDTO> flightDTO = new ArrayList<>();
+//		for (Flight flight : flights) {
+//			FlightDTO flightdto = new FlightDTO();
+//
+//			flightdto.setAirLine(flight.getAirLine());
+//			flightdto.setDuration(flight.getDuration());
+//
+//			flightdto.setDepartureTime(flight.getDepartureTime());
+//			flightdto.setArrivalTime(flight.getArrivalTime());
+//
+//			flightdto.setFare(flight.getFareDetails().stream().mapToLong(FareDetails::getFare));
+//		}
+
+		return flights.stream()
+				.map(flight -> new FlightDTO(flight.getAirLine(), flight.getDepartureTime(), flight.getArrivalTime(),
+						flight.getFareDetails().stream().mapToLong(FareDetails::getFare), flight.getDuration()))
+				.collect(Collectors.toList());
 	}
 }

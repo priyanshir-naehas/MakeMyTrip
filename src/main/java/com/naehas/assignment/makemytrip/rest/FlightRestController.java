@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.naehas.assignment.makemytrip.dto.FlightDTO;
 import com.naehas.assignment.makemytrip.entity.Flight;
 import com.naehas.assignment.makemytrip.service.FlightService;
 
@@ -74,21 +75,21 @@ public class FlightRestController {
 
 	// Searching,Sorting,Filtering Flights
 	@GetMapping("/search")
-	public List<Flight> searchFlights(@RequestParam("to") String to, @RequestParam("from") String from,
+	public List<FlightDTO> searchFlights(@RequestParam("to") String to, @RequestParam("from") String from,
 			@RequestParam("departureDate") LocalDate departureDate, @RequestParam("classType") String classType,
 			@RequestParam("roundTrip") boolean roundTrip,
 			@RequestParam(value = "returnDate", required = false) LocalDate returnDate,
 			@RequestParam(value = "sortType", defaultValue = "null", required = false) String sortType,
 			@RequestParam(value = "filterType", required = false, defaultValue = "null") String filterType) {
 
-		List<Flight> oneWayTripFlights = new ArrayList<>();
+		List<FlightDTO> oneWayTripFlights = new ArrayList<>();
 
 		// SORTING FOR ONEWAY
 		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, sortType, filterType);
 
 		// SORTING FOR ROUNDTRIP
 		if (roundTrip == true) {
-			List<Flight> roundTripFlights = new ArrayList<>();
+			List<FlightDTO> roundTripFlights = new ArrayList<>();
 			roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, sortType, filterType);
 
 			oneWayTripFlights.addAll(roundTripFlights);
