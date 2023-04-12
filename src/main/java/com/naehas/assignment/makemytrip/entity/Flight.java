@@ -25,6 +25,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Past;
 
 @Component
 @Entity
@@ -43,6 +45,7 @@ public class Flight {
 	private List<FareDetails> fareDetails;
 
 	@Column(name = "airline")
+	@Min(value = 3)
 	private String airLine;
 
 	@Column(name = "from_location")
@@ -53,6 +56,7 @@ public class Flight {
 
 	@Temporal(TemporalType.DATE)
 	@JsonFormat(pattern = "yyyy-MM-dd")
+	@Past(message = "The date of departure must be in the past.")
 	@Column(name = "dept_date", nullable = false)
 	private LocalDate departureDate;
 

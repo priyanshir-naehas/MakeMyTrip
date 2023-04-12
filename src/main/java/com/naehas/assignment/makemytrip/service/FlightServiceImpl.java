@@ -55,7 +55,7 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	public List<FlightDTO> searchFlights(String to, String from, LocalDate departureDate, String classType,
-			String sortType, String filterType) {
+			String sortType, String departureType) {
 
 		LocalTime startTime = null;
 		LocalTime endTime = null;
@@ -63,20 +63,20 @@ public class FlightServiceImpl implements FlightService {
 		Sort sortByFares = null;
 
 		// CHECKING FOR FILTER TYPE
-		if (filterType.equals("Morning Departure")) {
+		if (departureType.equalsIgnoreCase("morning")) {
 			startTime = LocalTime.of(5, 0);
 			endTime = LocalTime.of(12, 0);
-		} else if (filterType.equals("Late Departure")) {
+		} else if (departureType.equalsIgnoreCase("late")) {
 			startTime = LocalTime.of(18, 0);
 			endTime = LocalTime.of(23, 59);
 		}
 
 		// CHECKING FOR SORT TYPE
-		if (sortType.equals("Duration")) {
+		if (sortType.equalsIgnoreCase("duration")) {
 			sortByDuration = Sort.by("duration");
 		}
 
-		else if (sortType.equals("Fare")) {
+		else if (sortType.equalsIgnoreCase("fare")) {
 			sortByFares = Sort.by("fareDetails.fare");
 		}
 
@@ -93,7 +93,7 @@ public class FlightServiceImpl implements FlightService {
 		List<Flight> flights = new ArrayList<>();
 
 		// FOR MORNING DEPARTURE AND LATE DEPARTURE
-		if (filterType.equals("Morning Departure") || filterType.equals("Late Departure")) {
+		if (departureType.equalsIgnoreCase("morning") || departureType.equalsIgnoreCase("late")) {
 			flights = flightRepository.findByToAndFromAndDepartureDateAndDepartureTimeBetween(to, from, departureDate,
 					startTime, endTime, sendSort);
 		} else {
@@ -104,22 +104,12 @@ public class FlightServiceImpl implements FlightService {
 			flight.getFareDetails().removeIf(fareDetail -> !fareDetail.getClassType().equals(classType));
 		}
 
-//		List<FlightDTO> flightDTO = new ArrayList<>();
-//		for (Flight flight : flights) {
-//			FlightDTO flightdto = new FlightDTO();
-//
-//			flightdto.setAirLine(flight.getAirLine());
-//			flightdto.setDuration(flight.getDuration());
-//
-//			flightdto.setDepartureTime(flight.getDepartureTime());
-//			flightdto.setArrivalTime(flight.getArrivalTime());
-//
-//			flightdto.setFare(flight.getFareDetails().stream().mapToLong(FareDetails::getFare));
-//		}
 
 		return flights.stream()
 				.map(flight -> new FlightDTO(flight.getAirLine(), flight.getDepartureTime(), flight.getArrivalTime(),
-						flight.getFareDetails().stream().mapToLong(FareDetails::getFare), flight.getDuration()))
+						flight.getFareDetails().stream().mapToLong(FareDetails::getFare), flight.getDuration(),
+						flight.getTo(), flight.getFrom()))
 				.collect(Collectors.toList());
 	}
+
 }

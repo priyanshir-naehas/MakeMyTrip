@@ -22,4 +22,5 @@ public interface FlightService {
 	List<FlightDTO> searchFlights(String to, String from, LocalDate departureDate, String classType, String sortType,
 			String filterType);
 
+
 }

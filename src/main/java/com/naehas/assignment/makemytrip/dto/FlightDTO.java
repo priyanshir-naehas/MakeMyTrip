@@ -10,16 +10,21 @@ public class FlightDTO {
 	private LocalTime arrivalTime;
 	private LongStream fare;
 	private long duration;
+	private String from;
+	private String to;
 
 
 
-	public FlightDTO(String airLine, LocalTime departureTime, LocalTime arrivalTime, LongStream fare, long duration) {
+	public FlightDTO(String airLine, LocalTime departureTime, LocalTime arrivalTime, LongStream fare, long duration,
+			String to, String from) {
 		super();
 		this.airLine = airLine;
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
 		this.fare = fare;
 		this.duration = duration;
+		this.from = from;
+		this.to = to;
 	}
 
 	public String getAirLine() {
@@ -62,5 +67,20 @@ public class FlightDTO {
 		this.fare = longStream;
 	}
 
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getTo() {
+		return to;
+	}
+
+	public void setTo(String to) {
+		this.to = to;
+	}
 
 }
