@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,8 +37,11 @@ public class FlightRestController {
 
 	// Get All Flights
 	@GetMapping("/flights")
-	public List<Flight> getAllFlights() {
-		return flightService.findAll();
+	public List<Flight> getAllFlights(
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
+		Pageable page = PageRequest.of(pageNumber, pageSize);
+		return flightService.findAll(page);
 	}
 
 	@GetMapping("/flights/{flightId}")
@@ -91,14 +96,17 @@ public class FlightRestController {
 
 	// Searching,Sorting,Filtering Flights
 	@GetMapping("/search")
-	public List<FlightDTO> searchFlights(@RequestParam("to") String to,
-			@RequestParam("from") String from,
-			@RequestParam("departureDate") LocalDate departureDate, @RequestParam("classType") String classType,
-			@RequestParam("roundTrip") String roundTrip,
+	public List<FlightDTO> searchFlights(@RequestParam(value = "to", defaultValue = "null") String to,
+			@RequestParam(value = "from", defaultValue = "null") String from,
+			@RequestParam(value = "departureDate", required = false) LocalDate departureDate,
+			@RequestParam("classType") String classType, @RequestParam("roundTrip") String roundTrip,
 			@RequestParam(value = "returnDate", required = false) LocalDate returnDate,
 			@RequestParam(value = "sortType", defaultValue = "null", required = false) String sortType,
-			@RequestParam(value = "departureType", required = false, defaultValue = "null") String departureType)
+			@RequestParam(value = "departureType", required = false, defaultValue = "null") String departureType,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageNumber,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize)
 			throws Exception {
+
 
 		List<FlightDTO> oneWayTripFlights = new ArrayList<>();
 		classType = classType.toLowerCase();
@@ -106,12 +114,11 @@ public class FlightRestController {
 
 		// VALIDATION
 		FlightValidation flightValidation = new FlightValidation();
-
-
+		flightValidation.checkValid(to, from, departureDate);
 
 		// SORTING FOR ONEWAY
-		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType,
-				sortType, departureType);
+		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, sortType, departureType,
+				pageNumber, pageSize);
 
 		// SORTING FOR ROUNDTRIP
 		if (roundTrip.equalsIgnoreCase("true")) {
@@ -120,25 +127,26 @@ public class FlightRestController {
 			// VALIDATION
 			flightValidation.checkValid(departureDate, returnDate, classType, sortType, departureType);
 
-			roundTripFlights = flightService.searchFlights(from, to, returnDate, classType,
-					sortType.toLowerCase(),
-					departureType.toLowerCase());
+			roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, sortType, departureType,
+					pageNumber, pageSize);
 
 			oneWayTripFlights.addAll(roundTripFlights);
 
 		} else if (roundTrip.equalsIgnoreCase("false")) {
+
 			// VALIDATION
 			flightValidation.checkValid(departureDate, classType, sortType, departureType);
 			if (oneWayTripFlights.isEmpty()) {
-				throw new FlightNotFoundException("No such Flight present!!");
+				throw new FlightNotFoundException("No Flight present!!");
 			}
 			return oneWayTripFlights;
 		} else {
 			throw new FlightNotFoundException("Incorrect roundTrip Type . Accepted values : True or False");
 		}
 
+
 		if (oneWayTripFlights.isEmpty()) {
-			throw new FlightNotFoundException("No such Flight present!!");
+			throw new FlightNotFoundException("No Flight present!!");
 		}
 
 		return oneWayTripFlights;

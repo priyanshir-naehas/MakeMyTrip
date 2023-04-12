@@ -60,5 +60,19 @@ public class FlightValidation {
 
 	}
 
+	public void checkValid(String to, String from, LocalDate departureDate) {
+		if (to.equals("null")) {
+			throw new FlightNotFoundException("Parameter \'to\' is required");
+		}
+		if (from.equals("null")) {
+			throw new FlightNotFoundException("Parameter \'from\' is required");
+		}
+
+		if (departureDate == null) {
+			throw new FlightNotFoundException("Parameter \'departureDate\' is required");
+		}
+
+	}
+
 
 }

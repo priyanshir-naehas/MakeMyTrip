@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -55,12 +58,12 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	public List<FlightDTO> searchFlights(String to, String from, LocalDate departureDate, String classType,
-			String sortType, String departureType) {
+			String sortType, String departureType, int pageNumber, int pageSize) {
 
 		LocalTime startTime = null;
 		LocalTime endTime = null;
-		Sort sortByDuration = null;
-		Sort sortByFares = null;
+		Pageable sortByDuration = null;
+		Pageable sortByFares = null;
 
 		// CHECKING FOR FILTER TYPE
 		if (departureType.equalsIgnoreCase("morning")) {
@@ -73,21 +76,24 @@ public class FlightServiceImpl implements FlightService {
 
 		// CHECKING FOR SORT TYPE
 		if (sortType.equalsIgnoreCase("duration")) {
-			sortByDuration = Sort.by("duration");
+			sortByDuration = PageRequest.of(pageNumber, pageSize, Sort.by("duration"));
 		}
 
 		else if (sortType.equalsIgnoreCase("fare")) {
-			sortByFares = Sort.by("fareDetails.fare");
+			sortByFares = PageRequest.of(pageNumber, pageSize, Sort.by("fareDetails.fare"));
 		}
 
+
 		// variable to store the field for which we have to sort data
-		Sort sendSort = null;
+		Pageable sendSort = null;
 
 		// Logic to sort
 		if (sortByDuration != null) {
 			sendSort = sortByDuration;
 		} else if (sortByFares != null) {
 			sendSort = sortByFares;
+		} else {
+			sendSort=PageRequest.of(pageNumber, pageSize);
 		}
 
 		List<Flight> flights = new ArrayList<>();
@@ -110,6 +116,15 @@ public class FlightServiceImpl implements FlightService {
 						flight.getFareDetails().stream().mapToLong(FareDetails::getFare), flight.getDuration(),
 						flight.getTo(), flight.getFrom()))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Flight> findAll(Pageable page) {
+
+		Page<Flight> flight = flightRepository.findAll(page);
+		List<Flight> flights = flight.getContent();
+		return flights;
+
 	}
 
 }
