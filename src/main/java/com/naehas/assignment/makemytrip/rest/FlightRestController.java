@@ -30,19 +30,30 @@ public class FlightRestController {
 	@Autowired
 	private FlightService flightService;
 
+	// CONSTRUCTOR
 	public FlightRestController(FlightService flightService) {
 		super();
 		this.flightService = flightService;
 	}
 
-	// Get All Flights
+	// Get All Flights With Paging
 	@GetMapping("/flights")
 	public List<Flight> getAllFlights(
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
+
+		// EXCEPTIONS FOR PAGING in "GETFLIGHTS"
+		if (pageNumber < 0) {
+			throw new FlightNotFoundException("Page Number cannot be less than zero");
+		}
+		if (pageSize <= 0) {
+			throw new FlightNotFoundException("Page Size cannot be less than or equal to zero");
+		}
+
 		Pageable page = PageRequest.of(pageNumber, pageSize);
 		return flightService.findAll(page);
 	}
+
 
 	@GetMapping("/flights/{flightId}")
 	public Optional<Flight> getFlightDetail(@PathVariable int flightId) {
@@ -103,10 +114,8 @@ public class FlightRestController {
 			@RequestParam(value = "returnDate", required = false) LocalDate returnDate,
 			@RequestParam(value = "sortType", defaultValue = "null", required = false) String sortType,
 			@RequestParam(value = "departureType", required = false, defaultValue = "null") String departureType,
-			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageNumber,
-			@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize)
-			throws Exception {
-
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) throws Exception {
 
 		List<FlightDTO> oneWayTripFlights = new ArrayList<>();
 		classType = classType.toLowerCase();
@@ -114,7 +123,7 @@ public class FlightRestController {
 
 		// VALIDATION
 		FlightValidation flightValidation = new FlightValidation();
-		flightValidation.checkValid(to, from, departureDate);
+		flightValidation.checkValid(to, from, departureDate, pageNumber, pageSize);
 
 		// SORTING FOR ONEWAY
 		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, sortType, departureType,
@@ -140,10 +149,11 @@ public class FlightRestController {
 				throw new FlightNotFoundException("No Flight present!!");
 			}
 			return oneWayTripFlights;
-		} else {
-			throw new FlightNotFoundException("Incorrect roundTrip Type . Accepted values : True or False");
 		}
 
+		else {
+			throw new FlightNotFoundException("Incorrect roundTrip Type . Accepted values : True or False");
+		}
 
 		if (oneWayTripFlights.isEmpty()) {
 			throw new FlightNotFoundException("No Flight present!!");

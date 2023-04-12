@@ -60,7 +60,7 @@ public class FlightValidation {
 
 	}
 
-	public void checkValid(String to, String from, LocalDate departureDate) {
+	public void checkValid(String to, String from, LocalDate departureDate, int pageNumber, int pageSize) {
 		if (to.equals("null")) {
 			throw new FlightNotFoundException("Parameter \'to\' is required");
 		}
@@ -70,6 +70,12 @@ public class FlightValidation {
 
 		if (departureDate == null) {
 			throw new FlightNotFoundException("Parameter \'departureDate\' is required");
+		}
+		if (pageNumber < 0) {
+			throw new FlightNotFoundException("Page Number cannot be less than zero");
+		}
+		if (pageSize <= 0) {
+			throw new FlightNotFoundException("Page Size cannot be less than or equal to zero");
 		}
 
 	}

@@ -18,6 +18,7 @@ import com.naehas.assignment.makemytrip.dao.FlightRepository;
 import com.naehas.assignment.makemytrip.dto.FlightDTO;
 import com.naehas.assignment.makemytrip.entity.FareDetails;
 import com.naehas.assignment.makemytrip.entity.Flight;
+import com.naehas.assignment.makemytrip.validation.FlightNotFoundException;
 
 @Service
 public class FlightServiceImpl implements FlightService {
@@ -33,6 +34,18 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	public List<Flight> findAll() {
 		return flightRepository.findAll();
+
+	}
+
+	@Override
+	public List<Flight> findAll(Pageable page) {
+
+		Page<Flight> flight = flightRepository.findAll(page);
+		List<Flight> flights = flight.getContent();
+		if (flights.isEmpty()) {
+			throw new FlightNotFoundException("Flight Count :0");
+		}
+		return flights;
 
 	}
 
@@ -84,7 +97,7 @@ public class FlightServiceImpl implements FlightService {
 		}
 
 
-		// variable to store the field for which we have to sort data
+		// variable to store the field for which we have to sort data along with paging
 		Pageable sendSort = null;
 
 		// Logic to sort
@@ -93,6 +106,7 @@ public class FlightServiceImpl implements FlightService {
 		} else if (sortByFares != null) {
 			sendSort = sortByFares;
 		} else {
+			// Normal Paging if Sort Type is NULL
 			sendSort=PageRequest.of(pageNumber, pageSize);
 		}
 
@@ -118,13 +132,6 @@ public class FlightServiceImpl implements FlightService {
 				.collect(Collectors.toList());
 	}
 
-	@Override
-	public List<Flight> findAll(Pageable page) {
 
-		Page<Flight> flight = flightRepository.findAll(page);
-		List<Flight> flights = flight.getContent();
-		return flights;
-
-	}
 
 }

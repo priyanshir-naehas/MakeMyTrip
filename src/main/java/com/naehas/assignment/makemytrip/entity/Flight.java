@@ -49,8 +49,10 @@ public class Flight {
 	private String airLine;
 
 	@Column(name = "from_location")
+	@Min(value = 3)
 	private String from;
 
+	@Min(value = 3)
 	@Column(name = "to_location")
 	private String to;
 

@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Positive;
 
 @Component
 @Entity
@@ -24,6 +25,7 @@ public class FareDetails {
 	@Column(name = "id")
 	private int id;
 
+	@Positive
 	@Column(name = "fare")
 	private long fare;
 
