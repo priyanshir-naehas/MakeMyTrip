@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -25,10 +23,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Past;
 
-@Component
+
 @Entity
 @Table(name = "flight_data")
 
@@ -45,20 +41,17 @@ public class Flight {
 	private List<FareDetails> fareDetails;
 
 	@Column(name = "airline")
-	@Min(value = 3)
 	private String airLine;
 
 	@Column(name = "from_location")
-	@Min(value = 3)
 	private String from;
 
-	@Min(value = 3)
+
 	@Column(name = "to_location")
 	private String to;
 
 	@Temporal(TemporalType.DATE)
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	@Past(message = "The date of departure must be in the past.")
 	@Column(name = "dept_date", nullable = false)
 	private LocalDate departureDate;
 
@@ -158,15 +151,16 @@ public class Flight {
 		this.fareDetails = fareDetails;
 	}
 
+
 	@PrePersist
 	@PreUpdate
 	public void setDuration() {
 		this.duration = getDuration();
 	}
 
-	// Constructor
-	public Flight(List<FareDetails> fareDetails, String airLine, String from, String to, LocalDate departureDate,
-			LocalDate arrivalDate, LocalTime departureTime, LocalTime arrivalTime) {
+	public Flight(List<FareDetails> fareDetails, String airLine, String from, String to,
+			LocalDate departureDate, LocalDate arrivalDate, LocalTime departureTime, LocalTime arrivalTime,
+			long duration) {
 		super();
 		this.fareDetails = fareDetails;
 		this.airLine = airLine;
@@ -176,7 +170,7 @@ public class Flight {
 		this.arrivalDate = arrivalDate;
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
-
+		this.duration = duration;
 	}
 
 	public Flight() {

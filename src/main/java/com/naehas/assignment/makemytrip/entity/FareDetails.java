@@ -1,20 +1,23 @@
 package com.naehas.assignment.makemytrip.entity;
 
-import org.springframework.stereotype.Component;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Positive;
 
-@Component
+
 @Entity
 @Table(name = "fare_details")
 
@@ -25,7 +28,7 @@ public class FareDetails {
 	@Column(name = "id")
 	private int id;
 
-	@Positive
+
 	@Column(name = "fare")
 	private long fare;
 
@@ -38,6 +41,10 @@ public class FareDetails {
 	private Flight flightNumber;
 	
 	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "fare")
+	@JsonManagedReference(value = "fare-details")
+	private List<BookingDetails> userDetails;
+
     //Getters and Setters
 	public long getFare() {
 		return fare;
@@ -46,12 +53,6 @@ public class FareDetails {
 	public void setFare(long fare) {
 		this.fare = fare;
 	}
-
-	public FareDetails(long fare) {
-		super();
-		this.fare = fare;
-	}
-
 
 	public int getId() {
 		return id;
@@ -77,24 +78,35 @@ public class FareDetails {
 		this.flightNumber = flightNumber;
 	}
 
+	public List<BookingDetails> getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(List<BookingDetails> userDetails) {
+		this.userDetails = userDetails;
+	}
+
+
 	public FareDetails() {
 		super();
 	}
 
 	// Constructor
 
-	public FareDetails(long fare, String classType, Flight flightNumber) {
-		super();
-		this.fare = fare;
-		this.classType = classType;
-		this.flightNumber = flightNumber;
-
-	}
-
 	@Override
 	public String toString() {
 		return "FareDetails [id=" + id + ", fare=" + fare + ", classType=" + classType + ", flightNumber="
 				+ flightNumber + "]";
 	}
+
+	public FareDetails(long fare, String classType, Flight flightNumber, List<BookingDetails> userDetails) {
+		super();
+		this.fare = fare;
+		this.classType = classType;
+		this.flightNumber = flightNumber;
+		this.userDetails = userDetails;
+	}
+
+
 
 }

@@ -30,11 +30,12 @@ public class FlightRestController {
 	@Autowired
 	private FlightService flightService;
 
-	// CONSTRUCTOR
+
 	public FlightRestController(FlightService flightService) {
 		super();
 		this.flightService = flightService;
 	}
+
 
 	// Get All Flights With Paging
 	@GetMapping("/flights")
@@ -104,6 +105,7 @@ public class FlightRestController {
 		return "Deleted flight";
 
 	}
+
 
 	// Searching,Sorting,Filtering Flights
 	@GetMapping("/search")

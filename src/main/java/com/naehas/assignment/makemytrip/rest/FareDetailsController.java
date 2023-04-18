@@ -1,7 +1,6 @@
 package com.naehas.assignment.makemytrip.rest;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,7 +50,7 @@ public class FareDetailsController {
 	@DeleteMapping("/fares/{flightId}")
 	public String deleteFare(@PathVariable int flightId) {
 
-		Optional<FareDetails> fareDetail = fareService.findFareById(flightId);
+		FareDetails fareDetail = fareService.findFareById(flightId);
 		fareService.deleteById(flightId);
 		return "Deleted Fare Id" + flightId;
 

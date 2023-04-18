@@ -1,7 +1,6 @@
 package com.naehas.assignment.makemytrip.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +26,10 @@ public class FareServiceImp implements FareService {
 	}
 
 	@Override
-	public Optional<FareDetails> findFareById(int flightId) {
+	public FareDetails findFareById(int fareId) {
 
-		return fareDetailsRepository.findById(flightId);
+		return fareDetailsRepository.findById(fareId).orElse(null);
+
 	}
 
 	@Override
