@@ -35,11 +35,13 @@ public class BookingRestController {
 	}
 
 
-	// Get All Users With Paging
+	// Get All Booking along with a specific flightNumber With Paging
 	@GetMapping("/booking")
 	public List<AllBookingsDTO> getAllBookings(
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
-			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(required = false, defaultValue = "0") int flightNumber,
+			@RequestParam(required = false) String emailId) {
 
 		// EXCEPTIONS FOR PAGING in "GETUSERS"
 		if (pageNumber < 0) {
@@ -50,19 +52,10 @@ public class BookingRestController {
 		}
 
 		Pageable page = PageRequest.of(pageNumber, pageSize);
-		List<AllBookingsDTO> bookinglist = bookingService.findAllBookings(page);
+		List<AllBookingsDTO> bookinglist = bookingService.findAllBookings(page, flightNumber, emailId);
 		return bookinglist;
 	}
 
-//	@GetMapping("/booking")
-//	public List<AllBookingsDTO> getAllBookings(
-//	) {
-//
-//
-//		List<AllBookingsDTO> bookinglist = bookingService.findAllBookings();
-//		return bookinglist;
-//	}
-//
 
 
 	@GetMapping("/booking/{bookingId}")
@@ -78,7 +71,7 @@ public class BookingRestController {
 
 	}
 
-	// Add a new User
+	// Add a new Booking
 	@PostMapping(value = "/booking")
 	public String addBooking(@RequestBody BookingDetailsDTO bookingDetails) {
 

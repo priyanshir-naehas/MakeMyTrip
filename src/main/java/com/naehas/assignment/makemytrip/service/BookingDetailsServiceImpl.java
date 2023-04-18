@@ -37,9 +37,25 @@ public class BookingDetailsServiceImpl implements BookingDetailsService {
 		this.fareService = fareService;
 	}
 
+	// Get All Booking along with a specific flightNumber,EmaliId With Paging
 	@Override
-	public List<AllBookingsDTO> findAllBookings(Pageable page) {
-		Page<BookingDetails> booking_details = bookingRepository.findAll(page);
+	public List<AllBookingsDTO> findAllBookings(Pageable page, int flightNumber, String emailId) {
+		Page<BookingDetails> booking_details;
+
+		if (flightNumber != 0) {
+			booking_details = bookingRepository.findByFareFlightNumberFlightId(page, flightNumber);
+
+		}
+		else {
+			if (emailId == null) {
+				booking_details = bookingRepository.findAll(page);
+			} else {
+				booking_details = bookingRepository.findByUserEmailId(page, emailId);
+			}
+		}
+
+
+
 		List<BookingDetails> booking = booking_details.getContent();
 		if (booking.isEmpty()) {
 			throw new FlightNotFoundException("Bookings Count :0");
@@ -59,28 +75,6 @@ public class BookingDetailsServiceImpl implements BookingDetailsService {
 				.collect(Collectors.toList());
 	}
 
-//	@Override
-//	public List<AllBookingsDTO> findAllBookings() {
-//		List<BookingDetails> booking = bookingRepository.findAll();
-//		if (booking.isEmpty()) {
-//			throw new FlightNotFoundException("Bookings Count :0");
-//		}
-//         
-//		return booking.stream()
-//				.map(bookingDetails -> new AllBookingsDTO(
-//						bookingDetails.getFare().getFlightNumber().getAirLine(),
-//						bookingDetails.getFare().getFlightNumber().getDepartureDate(),
-//						bookingDetails.getFare().getFlightNumber().getArrivalDate(),
-//						bookingDetails.getFare().getFlightNumber().getDepartureTime(),
-//						bookingDetails.getFare().getFlightNumber().getArrivalTime(),
-//						bookingDetails.getFare().getFlightNumber().getFrom(),
-//						bookingDetails.getFare().getFlightNumber().getTo(),
-//						bookingDetails.getFare().getFlightNumber().getDuration(),
-//						bookingDetails.getFare().getClassType(),
-//						bookingDetails.getFare().getFare(),
-//						bookingDetails.getUser()))
-//						.collect(Collectors.toList());
-//	}
 	@Override
 	public Optional<BookingDetails> findByBookingId(int bookingId) {
 		return bookingRepository.findById(bookingId);
@@ -112,7 +106,6 @@ public class BookingDetailsServiceImpl implements BookingDetailsService {
 		userDetails.setPhoneNumber(bookingDetailsDTO.phoneNumber());
 		userDetails.setGender(bookingDetailsDTO.gender());
 		userDetails.setEmailId(bookingDetailsDTO.email());
-		// userdetailservice.existsByEmailId
 		if (userDetailsService.findByEmailId(bookingDetailsDTO.email()) != null) {
 			UserDetails user_details = userDetailsService.findByEmailId(bookingDetailsDTO.email());
 			bookingDetails.setUser(user_details);
@@ -121,7 +114,7 @@ public class BookingDetailsServiceImpl implements BookingDetailsService {
 
 		else {
 			UserDetails savedUser = userDetailsService.save(userDetails);
-		bookingDetails.setUser(savedUser);
+			bookingDetails.setUser(savedUser);
 		}
 
 		FareDetails fareDetails = fareService.findFareById(bookingDetailsDTO.fareId());
@@ -132,14 +125,8 @@ public class BookingDetailsServiceImpl implements BookingDetailsService {
 
 		bookingDetails.setFare(fareDetails);
 
-
-
-
-
 		bookingRepository.save(bookingDetails);
 
 	}
-
-	
 
 }

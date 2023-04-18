@@ -11,8 +11,6 @@ import com.naehas.assignment.makemytrip.entity.BookingDetails;
 
 public interface BookingDetailsService {
 
-
-
 	Optional<BookingDetails> findByBookingId(int bookingId);
 
 	BookingDetails save(BookingDetails bookingDetails);
@@ -23,6 +21,6 @@ public interface BookingDetailsService {
 
 	public void flightBooking(BookingDetailsDTO bookingDetails);
 
-	List<AllBookingsDTO> findAllBookings(Pageable page);
+	List<AllBookingsDTO> findAllBookings(Pageable page, int flightNumber, String emailId);
 
 }

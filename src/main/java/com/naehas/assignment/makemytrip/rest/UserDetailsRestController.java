@@ -81,13 +81,13 @@ public class UserDetailsRestController {
 
 	}
 
-	// Deleting User By BookingId
-	@DeleteMapping("/users/{bookingId}")
-	public String deleteFlight(@PathVariable int bookingId) {
+	// Deleting User By Id
+	@DeleteMapping("/users/{id}")
+	public String deleteFlight(@PathVariable int id) {
 
-		Optional<UserDetails> userDetail = userDetailsService.findByUserId(bookingId);
-		userDetailsService.deleteByUserId(bookingId);
-		return "Deleted User with Booking Id :" + bookingId;
+		Optional<UserDetails> userDetail = userDetailsService.findByUserId(id);
+		userDetailsService.deleteByUserId(id);
+		return "Deleted User with Booking Id :" + id;
 
 	}
 
