@@ -4,14 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
-
 import com.naehas.assignment.makemytrip.dto.FlightDTO;
 import com.naehas.assignment.makemytrip.entity.Flight;
 
 public interface FlightService {
 
-	public List<Flight> findAll();
+	public List<FlightDTO> findAll(int pageNumber, int pageSize);
 
 	public Optional<Flight> findById(int flightId);
 
@@ -25,6 +23,8 @@ public interface FlightService {
 	List<FlightDTO> searchFlights(String to, String from, LocalDate departureDate, String classType, String sortType,
 			String departureType, int pageNumber, int pageSize);
 
-	public List<Flight> findAll(Pageable page);
+	public List<FlightDTO> searchFlights(String to, String from, LocalDate departureDate, String classType,
+			String roundTrip, LocalDate returnDate, String sortType, String departureType, int pageNumber,
+			int pageSize);
 
 }

@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.naehas.assignment.makemytrip.dao.BookingDetailsRepository;
@@ -39,18 +41,51 @@ public class BookingDetailsServiceImpl implements BookingDetailsService {
 
 	// Get All Booking along with a specific flightNumber,EmaliId With Paging
 	@Override
-	public List<AllBookingsDTO> findAllBookings(Pageable page, int flightNumber, String emailId) {
+	public List<AllBookingsDTO> findAllBookings(int pageNumber, int pageSize, int flightNumber, String emailId,
+			String sortType) {
 		Page<BookingDetails> booking_details;
+		Pageable sortByBookingTime = null;
+		Pageable sortByFares = null;
+
+
+		// EXCEPTIONS FOR PAGING in "GETUSERS"
+		if (pageNumber < 0) {
+			throw new FlightNotFoundException("Page Number cannot be 'less than zero");
+		}
+		if (pageSize <= 0) {
+			throw new FlightNotFoundException("Page Size cannot be less than or equal to zero");
+		}
+
+		if (sortType.equalsIgnoreCase("bookingtime")) {
+			sortByBookingTime = PageRequest.of(pageNumber, pageSize, Sort.by("bookingTime"));
+		}
+
+		else if (sortType.equalsIgnoreCase("fare")) {
+			sortByFares = PageRequest.of(pageNumber, pageSize, Sort.by("fare.fare"));
+		}
+
+		// variable to store the field for which we have to sort data along with paging
+		Pageable sendSort = null;
+
+		// Logic to sort
+		if (sortByBookingTime != null) {
+			sendSort = sortByBookingTime;
+		} else if (sortByFares != null) {
+			sendSort = sortByFares;
+		} else {
+			// Normal Paging if Sort Type is NULL
+			sendSort = PageRequest.of(pageNumber, pageSize);
+		}
 
 		if (flightNumber != 0) {
-			booking_details = bookingRepository.findByFareFlightNumberFlightId(page, flightNumber);
+			booking_details = bookingRepository.findByFareFlightNumberFlightId(sendSort, flightNumber);
 
 		}
 		else {
 			if (emailId == null) {
-				booking_details = bookingRepository.findAll(page);
+				booking_details = bookingRepository.findAll(sendSort);
 			} else {
-				booking_details = bookingRepository.findByUserEmailId(page, emailId);
+				booking_details = bookingRepository.findByUserEmailId(sendSort, emailId);
 			}
 		}
 
@@ -87,11 +122,16 @@ public class BookingDetailsServiceImpl implements BookingDetailsService {
 
 	@Override
 	public void deleteByBookingId(int bookingId) {
+		Optional<BookingDetails> userDetail = bookingRepository.findById(bookingId);
+		if (userDetail == null) {
+			throw new FlightNotFoundException("Booking Does not Exists");
+		}
 		bookingRepository.deleteById(bookingId);
 	}
 
 	@Override
 	public void deleteAllBookings() {
+
 		bookingRepository.deleteAll();
 	}
 

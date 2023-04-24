@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class BookingDetails {
 	@SequenceGenerator(name = "my_seq_gen", sequenceName = "ENTITY_SEQ")
 	private int bookingId;
 
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "user_id")
 	@JsonBackReference(value = "user-id")
 	private UserDetails user;

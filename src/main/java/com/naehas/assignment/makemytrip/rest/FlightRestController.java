@@ -1,20 +1,17 @@
 package com.naehas.assignment.makemytrip.rest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,9 +19,9 @@ import com.naehas.assignment.makemytrip.dto.FlightDTO;
 import com.naehas.assignment.makemytrip.entity.Flight;
 import com.naehas.assignment.makemytrip.service.FlightService;
 import com.naehas.assignment.makemytrip.validation.FlightNotFoundException;
-import com.naehas.assignment.makemytrip.validation.FlightValidation;
 
 @RestController
+@RequestMapping("flights")
 public class FlightRestController {
 
 	@Autowired
@@ -38,25 +35,16 @@ public class FlightRestController {
 
 
 	// Get All Flights With Paging
-	@GetMapping("/flights")
-	public List<Flight> getAllFlights(
+	@GetMapping("")
+	public List<FlightDTO> getAllFlights(
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
 
-		// EXCEPTIONS FOR PAGING in "GETFLIGHTS"
-		if (pageNumber < 0) {
-			throw new FlightNotFoundException("Page Number cannot be less than zero");
-		}
-		if (pageSize <= 0) {
-			throw new FlightNotFoundException("Page Size cannot be less than or equal to zero");
-		}
-
-		Pageable page = PageRequest.of(pageNumber, pageSize);
-		return flightService.findAll(page);
+		return flightService.findAll(pageNumber, pageSize);
 	}
 
 
-	@GetMapping("/flights/{flightId}")
+	@GetMapping("/{flightId}")
 	public Optional<Flight> getFlightDetail(@PathVariable int flightId) {
 
 		Optional<Flight> flightById = flightService.findById(flightId);
@@ -70,7 +58,7 @@ public class FlightRestController {
 	}
 
 	// Add a new Flight
-	@PostMapping("flights")
+	@PostMapping("")
 	public Flight addFlight(@RequestBody Flight flight) {
 
 		Flight flight_detail = flightService.save(flight);
@@ -79,7 +67,7 @@ public class FlightRestController {
 	}
 
 	// Updating Flights
-	@PutMapping("/flights")
+	@PutMapping("")
 	public Flight updateFlight(@RequestBody Flight flight) {
 
 		Flight flight_detail = flightService.save(flight);
@@ -88,7 +76,7 @@ public class FlightRestController {
 	}
 
 	// Deleting Flight By Id
-	@DeleteMapping("/flights/{flightId}")
+	@DeleteMapping("/{flightId}")
 	public String deleteFlight(@PathVariable int flightId) {
 
 		Optional<Flight> flightDetail = flightService.findById(flightId);
@@ -98,7 +86,7 @@ public class FlightRestController {
 	}
 
 	// Deleting all Flights
-	@DeleteMapping("/flights")
+	@DeleteMapping("")
 	public String deleteAllFlights(Flight flight) {
 
 		flightService.deleteAll();
@@ -119,49 +107,10 @@ public class FlightRestController {
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) throws Exception {
 
-		List<FlightDTO> oneWayTripFlights = new ArrayList<>();
-		classType = classType.toLowerCase();
-		classType = StringUtils.capitalize(classType);
-
-		// VALIDATION
-		FlightValidation flightValidation = new FlightValidation();
-		flightValidation.checkValid(to, from, departureDate, pageNumber, pageSize);
-
-		// SORTING FOR ONEWAY
-		oneWayTripFlights = flightService.searchFlights(to, from, departureDate, classType, sortType, departureType,
-				pageNumber, pageSize);
-
-		// SORTING FOR ROUNDTRIP
-		if (roundTrip.equalsIgnoreCase("true")) {
-			List<FlightDTO> roundTripFlights = new ArrayList<>();
-
-			// VALIDATION
-			flightValidation.checkValid(departureDate, returnDate, classType, sortType, departureType);
-
-			roundTripFlights = flightService.searchFlights(from, to, returnDate, classType, sortType, departureType,
-					pageNumber, pageSize);
-
-			oneWayTripFlights.addAll(roundTripFlights);
-
-		} else if (roundTrip.equalsIgnoreCase("false")) {
-
-			// VALIDATION
-			flightValidation.checkValid(departureDate, classType, sortType, departureType);
-			if (oneWayTripFlights.isEmpty()) {
-				throw new FlightNotFoundException("No Flight present!!");
-			}
-			return oneWayTripFlights;
-		}
-
-		else {
-			throw new FlightNotFoundException("Incorrect roundTrip Type . Accepted values : True or False");
-		}
-
-		if (oneWayTripFlights.isEmpty()) {
-			throw new FlightNotFoundException("No Flight present!!");
-		}
-
-		return oneWayTripFlights;
-	}
-
+		
+		List<FlightDTO>findFlights=flightService.searchFlights(to,from,departureDate,classType,roundTrip,returnDate,sortType,departureType,pageNumber,pageSize);
+		
+		return findFlights;
 }
+}
+

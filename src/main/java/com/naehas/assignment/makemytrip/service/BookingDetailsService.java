@@ -3,8 +3,6 @@ package com.naehas.assignment.makemytrip.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
-
 import com.naehas.assignment.makemytrip.dto.AllBookingsDTO;
 import com.naehas.assignment.makemytrip.dto.BookingDetailsDTO;
 import com.naehas.assignment.makemytrip.entity.BookingDetails;
@@ -21,6 +19,8 @@ public interface BookingDetailsService {
 
 	public void flightBooking(BookingDetailsDTO bookingDetails);
 
-	List<AllBookingsDTO> findAllBookings(Pageable page, int flightNumber, String emailId);
+
+	List<AllBookingsDTO> findAllBookings(int pageNumber, int pageSize, int flightNumber, String emailId,
+			String sortType);
 
 }
