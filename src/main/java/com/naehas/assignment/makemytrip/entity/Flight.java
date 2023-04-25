@@ -23,6 +23,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotEmpty;
 
 
 @Entity
@@ -41,12 +42,14 @@ public class Flight {
 	private List<FareDetails> fareDetails;
 
 	@Column(name = "airline")
+	@NotEmpty(message = "Required field : Airline")
 	private String airLine;
 
+	@NotEmpty(message = "Required field : from")
 	@Column(name = "from_location")
 	private String from;
 
-
+	@NotEmpty(message = "Required field : to")
 	@Column(name = "to_location")
 	private String to;
 

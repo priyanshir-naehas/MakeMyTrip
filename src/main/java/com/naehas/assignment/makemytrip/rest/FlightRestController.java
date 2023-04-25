@@ -20,6 +20,8 @@ import com.naehas.assignment.makemytrip.entity.Flight;
 import com.naehas.assignment.makemytrip.service.FlightService;
 import com.naehas.assignment.makemytrip.validation.FlightNotFoundException;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("flights")
 public class FlightRestController {
@@ -59,7 +61,7 @@ public class FlightRestController {
 
 	// Add a new Flight
 	@PostMapping("")
-	public Flight addFlight(@RequestBody Flight flight) {
+	public Flight addFlight(@Valid @RequestBody Flight flight) {
 
 		Flight flight_detail = flightService.save(flight);
 		return flight_detail;
